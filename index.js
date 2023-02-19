@@ -1,7 +1,6 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const ObjectId = require('mongodb').ObjectId;
-
 const cors = require('cors')
 require('dotenv').config()
 const app = express();
@@ -16,51 +15,51 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.piqtj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-async function run(){
+async function run() {
 
-    try{
+    try {
         await client.connect();
         const database = client.db('FoodWagon');
-            const fooditemsCollection = database.collection('foodItems');
+        const fooditemsCollection = database.collection('foodItems');
 
-            // GET API
-            app.get('/fooditems', async(req, res)=>{
-                const cursor = fooditemsCollection.find({});
-                const fooditems = await cursor.toArray();
-                res.send(fooditems);
-            })
-            // GET SINGLE Item
-            app.get('/fooditems/:id', async(req, res)=>{
-                const id = req.params.id;
-                const query = {_id: ObjectId(id)};
-                const fooditem = await fooditemsCollection.findOne(query);
-                res.json(fooditem)
-            })
+        // GET API
+        app.get('/fooditems', async (req, res) => {
+            const cursor = fooditemsCollection.find({});
+            const fooditems = await cursor.toArray();
+            res.send(fooditems);
+        })
+        // GET SINGLE Item
+        app.get('/fooditems/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const fooditem = await fooditemsCollection.findOne(query);
+            res.json(fooditem)
+        })
 
-            // POST API
-            
+        // POST API
 
-            app.post('/fooditems', async(req, res)=>{
-                const fooditem = req.body;
 
-               console.log('Hit the post api', fooditem)
-                const result = await fooditemsCollection.insertOne(fooditem);
-                console.log(result);
-                res.json(result);
-            })
+        app.post('/fooditems', async (req, res) => {
+            const fooditem = req.body;
 
-             // DELETE API
+            console.log('Hit the post api', fooditem)
+            const result = await fooditemsCollection.insertOne(fooditem);
+            console.log(result);
+            res.json(result);
+        })
 
-             app.delete('/fooditems/:id', async(req, res )=>{
-                const id = req.params.id;
-                const query = {_id:ObjectId(id)};
-                const result = await fooditemsCollection.deleteOne(query);
-                res.json(result);
-                
-            })
+        // DELETE API
+
+        app.delete('/fooditems/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await fooditemsCollection.deleteOne(query);
+            res.json(result);
+
+        })
 
     }
-    finally{
+    finally {
         // await client.close();
     }
 
@@ -68,10 +67,10 @@ async function run(){
 
 run().catch(console.dir)
 
-app.get('/', (req, res)=>{
+app.get('/', (req, res) => {
     res.send('Food Wagon server is running');
-  
+
 })
-app.listen(port, ()=>{
+app.listen(port, () => {
     console.log('server running at port', port)
 })
